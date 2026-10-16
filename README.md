@@ -24,6 +24,6 @@ The importer reads the `Hadiths` worksheet and requires `ID`, `Topic`, `Hadith`,
 
 ## GitHub Pages
 
-The included GitHub Actions workflow builds and deploys the `main` branch to GitHub Pages. Configure the repository variable `VITE_SUPABASE_URL` and secret `VITE_SUPABASE_ANON_KEY` before deploying. In repository Settings → Pages, select GitHub Actions as the build and deployment source.
+The included GitHub Actions workflow builds and deploys the `main` branch to GitHub Pages. Configure the repository secret `VITE_SUPABASE_ANON_KEY` before deploying. In repository Settings → Pages, select GitHub Actions as the build and deployment source.
 
 Noor Al-Hawza remains an optional manual verification link; the app does not scrape or automate it.
