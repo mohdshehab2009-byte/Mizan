@@ -1,0 +1,6 @@
+node_modules
+dist
+.env
+.env.*
+!.env.example
+public/pdfs/Mizan_Hadith_Sheet_All4.xlsx
