@@ -24,6 +24,8 @@ The importer reads the `Hadiths` worksheet and requires `ID`, `Topic`, `Hadith`,
 
 The topic filter is an autocomplete index that suggests matching topics as you type. The daily hadith is selected deterministically from the current local date, so it stays the same during that day and changes the following day. WhatsApp formats the title with asterisks for bold text.
 
+WhatsApp messages include the narrator line when available, bold the hadith text, and display the source and group invitation.
+
 ## GitHub Pages
 
 The included GitHub Actions workflow builds and deploys the `main` branch to GitHub Pages. Configure the repository secret `VITE_SUPABASE_ANON_KEY` before deploying. In repository Settings → Pages, select GitHub Actions as the build and deployment source.

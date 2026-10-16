@@ -5,21 +5,17 @@ export interface WhatsAppFormatOptions {
   title: string
 }
 
-function sourceLine(hadith: Hadith): string {
-  const details = [hadith.book, hadith.volume && `ج ${hadith.volume}`, hadith.page && `ص ${hadith.page}`].filter(Boolean)
-  return `~ ${[hadith.sourceName, ...details].join('، ')}`
-}
-
 export function formatWhatsApp(hadith: Hadith, options: WhatsAppFormatOptions): string {
   const title = options.title.trim() || 'حديث'
   const sequence = options.sequence.trim() || '—'
+  const narrator = hadith.narrator?.trim()
   return [
     `(${sequence}) ﴿ *${title}* ﴾`,
     '',
-    hadith.text,
-    '',
-    sourceLine(hadith),
-    '__________',
+    ...(narrator ? [`> عن ${narrator}  قَال :`, ''] : []),
+    `*${hadith.text.trim()}*.`,
+    '____________________________',
+    `~ ${hadith.sourceName.trim() || 'المصدر غير متاح'}`,
     '',
     'للإشتراك🔹مجموعة - ميزان الحكمة🔹',
     'https://chat.whatsapp.com/C5yU2ySdrOQ3C7wJive7aR',

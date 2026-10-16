@@ -29,9 +29,13 @@ export function DailyHadithCard({ hadith, dayKey }: DailyHadithCardProps) {
       </div>
       <div className="p-5 sm:p-7">
         {hadith.title && <p className="mb-3 text-sm font-bold text-gold">{hadith.title}</p>}
+        {hadith.narrator && (
+          <blockquote dir="auto" className="mb-3 border-r-4 border-gold pr-4 text-base font-bold leading-8 text-forest">
+            &gt; عن {hadith.narrator.trim()}  قَال :
+          </blockquote>
+        )}
         <p dir="auto" className="font-arabic text-xl leading-[2] text-ink">{hadith.text}</p>
         <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2 border-t border-[#edf0eb] pt-4 text-sm">
-          {hadith.narrator && <p><span className="font-bold text-[#718078]">الراوي:</span> {hadith.narrator}</p>}
           <p><span className="font-bold text-[#718078]">المصدر:</span> {hadith.sourceName}</p>
           {hadith.volume && <p><span className="font-bold text-[#718078]">المجلد:</span> {hadith.volume}</p>}
           {hadith.page && <p><span className="font-bold text-[#718078]">الصفحة:</span> {hadith.page}</p>}
