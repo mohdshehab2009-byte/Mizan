@@ -17,7 +17,7 @@ export function formatWhatsApp(hadith: Hadith, options: WhatsAppFormatOptions): 
     '____________________________',
     `~ ${hadith.sourceName.trim() || 'المصدر غير متاح'}`,
     '',
-    'للإشتراك🔹مجموعة - ميزان الحكمة🔹',
+    '*للإشتراك - مجتمع ميزان الحكمة*',
     'https://chat.whatsapp.com/C5yU2ySdrOQ3C7wJive7aR',
   ].join('\n')
 }
