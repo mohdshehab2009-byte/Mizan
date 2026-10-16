@@ -14,7 +14,7 @@ export function formatWhatsApp(hadith: Hadith, options: WhatsAppFormatOptions): 
   const title = options.title.trim() || 'حديث'
   const sequence = options.sequence.trim() || '—'
   return [
-    `(${sequence}) ﴿ ${title} ﴾`,
+    `(${sequence}) ﴿ *${title}* ﴾`,
     '',
     hadith.text,
     '',

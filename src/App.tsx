@@ -1,30 +1,79 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AlertCircle, ArrowUpRight, BookOpen, Info, SearchCheck, Sparkles } from 'lucide-react'
 import { SearchBar } from './components/SearchBar'
+import { TopicFilter } from './components/TopicFilter'
+import { DailyHadithCard } from './components/DailyHadithCard'
 import { SourceSelector } from './components/SourceSelector'
 import { HadithResultWithPreview } from './components/HadithCard'
 import { approvedSources } from './config/sources'
-import { searchSelectedSources } from './services/searchService'
+import { getDailyHadith, searchSelectedSources } from './services/searchService'
 import type { Hadith } from './types/Hadith'
 import type { SourceId } from './types/Source'
 
 function App() {
   const [query, setQuery] = useState('')
+  const [topic, setTopic] = useState('')
   const [selectedSources, setSelectedSources] = useState<SourceId[]>(['mizan-database', 'noor-al-hawza'])
   const [results, setResults] = useState<Hadith[]>([])
   const [totalResults, setTotalResults] = useState(0)
+  const [dailyHadith, setDailyHadith] = useState<Hadith | null>(null)
+  const [dailyDate, setDailyDate] = useState('')
+  const [dailyError, setDailyError] = useState('')
+  const [dailyRetry, setDailyRetry] = useState(0)
   const [selectedHadith, setSelectedHadith] = useState<Hadith | null>(null)
   const [loading, setLoading] = useState(false)
   const [searched, setSearched] = useState(false)
   const [error, setError] = useState('')
   const [sourceUnavailable, setSourceUnavailable] = useState(false)
 
+  useEffect(() => {
+    let active = true
+    let requestedDate = ''
+
+    const loadToday = () => {
+      const now = new Date()
+      const dateParts = new Intl.DateTimeFormat('en', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      }).formatToParts(now)
+      const dateValues = Object.fromEntries(dateParts.map(({ type, value }) => [type, value]))
+      const localDate = `${dateValues.year}-${dateValues.month}-${dateValues.day}`
+      if (requestedDate === localDate) return
+
+      requestedDate = localDate
+      setDailyHadith(null)
+      setDailyDate('')
+      setDailyError('')
+      getDailyHadith(localDate)
+        .then((hadith) => {
+          if (active) {
+            setDailyHadith(hadith)
+            setDailyDate(localDate)
+          }
+        })
+        .catch((dailyLoadError: unknown) => {
+          if (active) {
+            requestedDate = ''
+            setDailyError(dailyLoadError instanceof Error ? dailyLoadError.message : 'تعذر تحميل حديث اليوم.')
+          }
+        })
+    }
+
+    loadToday()
+    const interval = window.setInterval(loadToday, 60_000)
+    return () => {
+      active = false
+      window.clearInterval(interval)
+    }
+  }, [dailyRetry])
+
   const search = async () => {
-    if (!query.trim()) { setError('اكتب جزءًا من الحديث لبدء البحث.'); return }
+    if (!query.trim() && !topic.trim()) { setError('اكتب جزءًا من الحديث أو اختر موضوعًا للبحث.'); return }
     if (!selectedSources.length) { setError('اختر مصدرًا واحدًا على الأقل.'); return }
     setLoading(true); setError(''); setSearched(true); setSelectedHadith(null)
     try {
-      const response = await searchSelectedSources(query.trim(), selectedSources)
+      const response = await searchSelectedSources(query.trim(), selectedSources, topic.trim())
       setResults(response.results); setTotalResults(response.totalResults); setSourceUnavailable(response.unavailable)
     } catch (searchError) {
       setResults([]); setTotalResults(0); setSourceUnavailable(false)
@@ -32,7 +81,7 @@ function App() {
     } finally { setLoading(false) }
   }
 
-  const clear = () => { setQuery(''); setResults([]); setTotalResults(0); setSearched(false); setError(''); setSourceUnavailable(false); setSelectedHadith(null) }
+  const clear = () => { setQuery(''); setTopic(''); setResults([]); setTotalResults(0); setSearched(false); setError(''); setSourceUnavailable(false); setSelectedHadith(null) }
   const toggleSource = (source: SourceId) => setSelectedSources((current) => current.includes(source) ? current.filter((id) => id !== source) : [...current, source])
   const noorHawzaUrl = approvedSources[0].url
 
@@ -52,8 +101,17 @@ function App() {
         <h1 className="font-display text-4xl font-extrabold leading-tight tracking-tight text-forest sm:text-5xl">اعثر على النص.<br /><span className="text-gold">وشاركه بأمانة.</span></h1>
         <p className="mt-5 max-w-2xl text-base leading-7 text-[#59665d]">ابحث في قاعدة بيانات ميزان الحكمة على Supabase وجهّز النتيجة للمشاركة عبر واتساب.</p>
       </section>
+      <section className="mt-8" aria-label="حديث اليوم">
+        {dailyHadith && <DailyHadithCard hadith={dailyHadith} dayKey={dailyDate} />}
+        {!dailyHadith && !dailyError && <div className="flex items-center justify-center gap-3 rounded-2xl border border-[#d9dfd8] bg-white p-6 text-sm font-bold text-forest"><span className="spinner spinner-dark" /> جارٍ تحميل حديث اليوم...</div>}
+        {dailyError && <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[#efc5bd] bg-[#fff1ed] px-4 py-3 text-sm font-semibold text-[#a13c2c]">
+          <span>{dailyError}</span>
+          <button type="button" className="rounded-lg border border-[#a13c2c] px-3 py-1.5" onClick={() => setDailyRetry((retry) => retry + 1)}>إعادة المحاولة</button>
+        </div>}
+      </section>
       <section className="mt-9 rounded-3xl border border-[#d9dfd8] bg-[#fbfcfa] p-5 sm:p-7">
         <SearchBar value={query} loading={loading} onChange={(value) => { setQuery(value); if (error) setError('') }} onSearch={search} onClear={clear} />
+        <TopicFilter value={topic} disabled={loading} onChange={(value) => { setTopic(value); if (error) setError('') }} />
         <div className="mt-6"><SourceSelector selected={selectedSources} onChange={toggleSource} /></div>
         <div className="mt-5 flex items-start gap-2 text-xs leading-5 text-[#718078]">
           <Info className="mt-0.5 shrink-0 text-gold" size={15} />
@@ -72,7 +130,7 @@ function App() {
                 : 'لا توجد نتيجة'}
             </h2>
           </div>
-          <span dir="auto" className="hidden text-sm text-[#718078] sm:block">البحث عن: “{query}”</span>
+          <span dir="auto" className="hidden text-sm text-[#718078] sm:block">{query ? `البحث عن: “${query}”` : `الموضوع: “${topic}”`}</span>
         </div>
         {sourceUnavailable && <div className="mb-5 flex items-start gap-3 rounded-xl border border-[#eadcae] bg-[#fffaf0] p-4 text-sm text-[#6d5a21]">
           <AlertCircle className="mt-0.5 shrink-0" size={17} />

@@ -46,6 +46,47 @@ export interface Database {
           total_count: number
         }>
       }
+      search_hadiths_by_topic: {
+        Args: {
+          search_query: string
+          topic_filter: string
+          result_limit?: number
+        }
+        Returns: Array<{
+          id: string
+          topic: string
+          hadith_text: string
+          source: string
+          narrator: string | null
+          volume: string | null
+          page: string | null
+          total_count: number
+        }>
+      }
+      search_hadith_topics: {
+        Args: {
+          topic_query?: string
+          result_limit?: number
+        }
+        Returns: Array<{
+          topic: string
+        }>
+      }
+      get_daily_hadith: {
+        Args: {
+          day_key: string
+        }
+        Returns: Array<{
+          id: string
+          topic: string
+          hadith_text: string
+          source: string
+          narrator: string | null
+          volume: string | null
+          page: string | null
+          total_count: number
+        }>
+      }
     }
     Enums: Record<string, never>
     CompositeTypes: Record<string, never>

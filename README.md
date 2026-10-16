@@ -14,13 +14,15 @@ Set `VITE_SUPABASE_ANON_KEY` in `.env.local` to the project's public anon/publis
 
 ## Supabase setup and data import
 
-1. In the Supabase SQL Editor, run [`supabase/migrations/20261016000000_create_hadiths.sql`](./supabase/migrations/20261016000000_create_hadiths.sql).
+1. In the Supabase SQL Editor, run [`supabase/migrations/20261016000000_create_hadiths.sql`](./supabase/migrations/20261016000000_create_hadiths.sql), then run each newer migration in `supabase/migrations/` in filename order.
 2. Keep the source workbook at `public/pdfs/Mizan_Hadith_Sheet_All4.xlsx`. It is git-ignored and is not published with the app.
 3. Add the project's `service_role` key to `SUPABASE_SERVICE_ROLE_KEY` in `.env.local`. Never add this key to a `VITE_` variable or commit it.
 4. Run `npm run import:hadiths`. The importer validates the workbook, imports records in batches, and removes rows from older dataset versions after a successful import.
 5. Remove the service-role key from `.env.local` when the import is finished. Normal app searches use only the anon key.
 
 The importer reads the `Hadiths` worksheet and requires `ID`, `Topic`, `Hadith`, and `Source`. It also imports `Narrator`, `Volume`, and `PDF page` when present. Search returns up to 100 best matches and reports the total match count.
+
+The topic filter is an autocomplete index that suggests matching topics as you type. The daily hadith is selected deterministically from the current local date, so it stays the same during that day and changes the following day. WhatsApp formats the title with asterisks for bold text.
 
 ## GitHub Pages
 
