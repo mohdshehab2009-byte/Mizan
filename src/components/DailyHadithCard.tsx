@@ -1,5 +1,6 @@
 import { BookOpenCheck, Sparkles } from 'lucide-react'
 import type { Hadith } from '../types/Hadith'
+import { BookPagePreview } from './BookPagePreview'
 import { CopyButton } from './CopyButton'
 import { formatWhatsApp } from '../utils/formatWhatsApp'
 
@@ -40,7 +41,10 @@ export function DailyHadithCard({ hadith, dayKey }: DailyHadithCardProps) {
           {hadith.volume && <p><span className="font-bold text-[#718078]">المجلد:</span> {hadith.volume}</p>}
           {hadith.page && <p><span className="font-bold text-[#718078]">الصفحة:</span> {hadith.page}</p>}
         </div>
-        <div className="mt-5"><CopyButton text={formatted} /></div>
+        <div className="mt-5 flex flex-wrap items-center gap-3">
+          <CopyButton text={formatted} />
+          <BookPagePreview hadith={hadith} />
+        </div>
       </div>
     </article>
   )

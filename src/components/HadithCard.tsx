@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { BookOpen, ExternalLink } from 'lucide-react'
 import type { Hadith } from '../types/Hadith'
+import { BookPagePreview } from './BookPagePreview'
 import { SourceBadge } from './SourceBadge'
 import { WhatsAppPreview } from './WhatsAppPreview'
 
@@ -17,7 +18,13 @@ export function HadithCard({ hadith, onFormat }: { hadith: Hadith; onFormat: (ha
         <div className="mt-5 grid gap-x-6 gap-y-3 border-t border-[#edf0eb] pt-5 sm:grid-cols-2">
           {fields.map(([label, key, icon]) => { const value = hadith[key]; return value ? <div key={key} className="flex gap-2 text-sm"><span aria-hidden="true">{icon}</span><span className="font-bold text-[#718078]">{label}:</span><span className="min-w-0 break-words text-ink">{value}</span></div> : null })}
         </div>
-        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><button type="button" onClick={() => onFormat(hadith)} className="rounded-xl border border-forest px-4 py-2.5 text-sm font-bold text-forest transition hover:bg-[#f1f7f2]">إنشاء تنسيق واتساب</button>{hadith.url ? <a href={hadith.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-sm font-bold text-gold underline decoration-gold/40 underline-offset-4 hover:text-forest">المصدر الأصلي <ExternalLink size={15} /></a> : <span className="text-xs text-[#87928b]">الرابط الأصلي غير متاح</span>}</div>
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+          <div className="flex flex-wrap gap-3">
+            <button type="button" onClick={() => onFormat(hadith)} className="rounded-xl border border-forest px-4 py-2.5 text-sm font-bold text-forest transition hover:bg-[#f1f7f2]">إنشاء تنسيق واتساب</button>
+            <BookPagePreview hadith={hadith} />
+          </div>
+          {hadith.url ? <a href={hadith.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-sm font-bold text-gold underline decoration-gold/40 underline-offset-4 hover:text-forest">المصدر الأصلي <ExternalLink size={15} /></a> : <span className="text-xs text-[#87928b]">الرابط الأصلي غير متاح</span>}
+        </div>
       </div>
     </article>
   )
