@@ -22,7 +22,7 @@ Set `VITE_SUPABASE_ANON_KEY` in `.env.local` to the project's public anon/publis
 
 The importer reads the `Hadiths` worksheet and requires `ID`, `Topic`, `Hadith`, and `Source`. It also imports `Narrator`, `Volume`, and `PDF page` when present. Search returns up to 100 best matches and reports the total match count.
 
-To preview a hadith's source page in the app, keep the four book PDFs in `public/pdfs/` named `Part 1.pdf`, `Part 2.pdf`, `Part 3.pdf`, and `Part 4.pdf`. The `Volume` value selects the PDF, and `PDF page` is treated as the PDF viewer page number. Search results and the daily hadith show an in-app preview button when both values are valid.
+To preview a hadith's source page in the app, keep the four book PDFs in `public/pdfs/` named `Part 1.pdf`, `Part 2.pdf`, `Part 3.pdf`, and `Part 4.pdf`. The `Volume` value selects the PDF, and `PDF page` is treated as the PDF viewer page number. Search results and the daily hadith show an in-app preview button when both values are valid. The app renders that exact PDF page as an in-app snapshot, including on mobile devices; the original PDF can still be opened separately.
 
 The topic filter is an autocomplete index that suggests matching topics as you type. The daily hadith is selected deterministically from the current local date, so it stays the same during that day and changes the following day. WhatsApp formats the title with asterisks for bold text.
 
